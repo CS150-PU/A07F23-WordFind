@@ -1,11 +1,11 @@
 //******************************************************************************
 // File name:   main.cpp
 // Author:      CS Faculty
-// Date:        8/22/2023
+// Date:        11/17/2023
 // Class:       CS150-xx (xx is your section number)
-// Assignment:  Hello World
-// Purpose:     Display the message Hello World to the screen
-// Hours:       0.25
+// Assignment:  Word Find
+// Purpose:     Word find puzzle
+// Hours:       xxx
 //******************************************************************************
 
 #include <iostream>
@@ -27,36 +27,13 @@ void readPuzzle (ifstream &inFile, int &numRows, int &numCols,
 void printPuzzle (char puzzle[][MAX], int numRows, int numCols);
 void searchPuzzle (ifstream &inFile, char puzzle[][MAX], int numRows, 
                    int numCols);
-bool searchHorizontal (char puzzle[][MAX], int numRows, int numCols, 
-                       char word[], int length, int &rowI, int &colJ);
-bool checkRow (char line[], int numCols, int start, char word[], int length);
-bool searchVertical (char puzzle[][MAX], int numRows, int numCols, char word[], 
-                     int length, int &rowI, int &colJ);
-bool checkCol (char puzzle[][MAX], int numRows, int start, int j, char word[], 
-               int length);
 
 int main () {
   ifstream inFile;
   int numRows, numCols;
   char puzzle[MAX][MAX];
 
-  openFile (inFile);
 
-  readPuzzle (inFile, numRows, numCols, puzzle);
-
-  printHeading ("Word Search Puzzle" , '*');
-  cout << endl << endl;
-  printHeading ("Number of Rows", ':');
-  cout << "  " << numRows << endl;
-  printHeading ("Number of Columns ", ':');
-  cout << "  " << numCols << endl << endl;
-  printHeading ("The Puzzle", '/');
-  cout << endl;
-  printPuzzle (puzzle, numRows, numCols);
-  cout << endl;
-  printHeading ("Search Word Results", '/');
-  cout << endl;
-  searchPuzzle (inFile, puzzle, numRows, numCols);
 
   return EXIT_SUCCESS;
 }
@@ -73,14 +50,7 @@ Parameters:		prompt  - the text to be displayed
 Returned:			None
 ***********************************************************************/
 void printHeading (string prompt, char symbol) {
-  for (int i = 0; i < NUM_SYMBOLS; i++) {
-    cout << symbol;
-  }
-  cout << " " << prompt << " ";
-  for (int i = 0; i < NUM_SYMBOLS; i++) {
-    cout << symbol;
-  }
-  cout << " ";
+
 }
 
 /***********************************************************************
@@ -93,11 +63,7 @@ Parameters:		inFile  - the input file stream passed by reference
 Returned:			None
 ***********************************************************************/
 void openFile (ifstream &inFile) {
-  inFile.open (FILE_NAME);
-  if (inFile.fail()) {
-    cout << "The file was not opened" << endl;
-    exit (EXIT_FAILURE);
-  }
+
 }
 
 /***********************************************************************
@@ -114,13 +80,7 @@ Returned:			None
 ***********************************************************************/
 void readPuzzle (ifstream &inFile, int &numRows, int &numCols, 
                  char puzzle[][MAX]) {
-  inFile >> numRows >> numCols;
 
-  for (int i = 0; i < numRows; i++) {
-    for (int j = 0; j < numCols; j++) {
-      inFile >> puzzle[i][j];
-    }
-  }
 }
 
 /***********************************************************************
@@ -135,12 +95,7 @@ Parameters:		puzzle  - the puzzle
 Returned:			None
 ***********************************************************************/
 void printPuzzle (char puzzle[][MAX], int numRows, int numCols) {
-  for (int i = 0; i < numRows; i++) {
-    for (int j = 0; j < numCols; j++) {
-      cout << puzzle[i][j];
-    }
-    cout << endl;
-  }
+
 }
 
 /***********************************************************************
@@ -160,75 +115,5 @@ Returned:			None
 ***********************************************************************/
 void searchPuzzle (ifstream &inFile, char puzzle[][MAX], int numRows, 
                    int numCols) {
-  char word[MAX];
-  int wordLength, rowI, colJ;
-  while (inFile >> word) {
-    cout << setw(20) << left << word;
-    wordLength = strlen (word);
-    if (searchHorizontal (puzzle, numRows, numCols, word, wordLength, rowI, colJ)) {
-      cout << " FOUND " << "(Row: " << rowI << " Column: " << colJ << " Horizontally)";
-    }
-    else if (searchVertical (puzzle, numRows, numCols, word, wordLength, rowI, colJ)) {
-      cout << " FOUND " << "(Row: " << rowI << " Column: " << colJ << " Vertically)";
-    }
 
-    cout << endl;
-  }
-}
-
-bool searchHorizontal (char puzzle[][MAX], int numRows, int numCols, char word[], 
-                       int length, int &rowI, int &colJ) {
-  bool bFound = false;
-  int index = 0;
-  for (int i = 0; i < numRows && !bFound; i++) {
-    for (int j = 0; j < numCols && !bFound; j++) {
-      if (puzzle[i][j] == word[index] && j + length <= numCols) {
-        bFound = checkRow (puzzle[i], numCols, j, word, length);
-        if (bFound) {
-          rowI = i + 1;
-          colJ = j + 1;
-        }
-      }
-    }
-  }
-  return bFound;
-}
-
-bool checkRow (char line[], int numCols, int start, char word[], int length) {
-  bool bFound = true;
-  for (int i = start, j = 0; i < numCols && j < length; i++, j++) {
-    if (line[i] != word[j]) {
-      bFound = false;
-    }
-  }
-  return bFound;
-}
-
-bool searchVertical (char puzzle[][MAX], int numRows, int numCols, char word[], 
-                     int length, int &rowI, int &colJ) {
-  bool bFound = false;
-  int index = 0;
-  for (int j = 0; j < numCols && !bFound; j++) {
-    for (int i = 0; i < numRows && !bFound; i++) {
-      if (puzzle[i][j] == word[index] && i + length <= numRows) {
-        bFound = checkCol (puzzle, numRows, i, j, word, length);
-        if (bFound) {
-          rowI = i + 1;
-          colJ = j + 1;
-        }
-      }
-    }
-  }
-  return bFound;
-
-}
-
-bool checkCol (char puzzle[][MAX], int numRows, int start, int j, char word[], int length){
-  bool bFound = true;
-  for (int i = start, w = 0; i < numRows && w < length; i++, w++) {
-    if (puzzle[i][j] != word[w]) {
-      bFound = false;
-    }
-  }
-  return bFound;
 }
